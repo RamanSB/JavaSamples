@@ -20,28 +20,26 @@ public class BankingJDBC {
             "lei, avg_salary) VALUES ('NewBank', 200, 0, 50000000.50, '81V0FA7ASNKASD74A8D3', 80000);";
 
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
         String jdbcUrl = "jdbc:mysql://localhost:3306/example_jdbc_db";
         BankingJDBC bankingJDBC = new BankingJDBC(jdbcUrl);
-        Connection dbConnection = bankingJDBC.getDbConnection();
-        System.out.println("Running SELECT query on database: example_jdbc_db | table: banks");
-        executeSelectStatementQuery(dbConnection);
-        System.out.println("Updating the database: example_jdbc_db | table: banks");
-        executeUpdateStatementQuery(dbConnection);
-        System.out.println(dbConnection.getMetaData());
+        try(Connection dbConnection = bankingJDBC.getDbConnection()){
+            System.out.println("Running SELECT query on database: example_jdbc_db | table: banks");
+            executeSelectStatementQuery(dbConnection);
+            System.out.println("Updating the database: example_jdbc_db | table: banks");
+            executeUpdateStatementQuery(dbConnection);
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
     }
 
     /**
      * In a real world use-case we would use DataSource instead of DriverManager:
      * https://en.wikipedia.org/wiki/Datasource & https://docs.oracle.com/javase/7/docs/api/javax/sql/DataSource.html
      */
-    private Connection getDbConnection(){
+    private Connection getDbConnection() throws SQLException{
         Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(this.jdbcUrl, this.props.getProperty("username"), this.props.getProperty("password"));
-        } catch(SQLException exception){
-            exception.printStackTrace();
-        }
+        conn = DriverManager.getConnection(this.jdbcUrl, this.props.getProperty("username"), this.props.getProperty("password"));
         return conn;
     }
 
