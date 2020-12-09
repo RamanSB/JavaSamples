@@ -4,8 +4,8 @@ import java.util.Scanner;
 
 public class BankingJDBC {
 
-    private String jdbcUrl;
-    private Properties props = new Properties();
+    private final String jdbcUrl;
+    private final Properties props = new Properties();
 
     BankingJDBC(String jdbcUrl){
         this.jdbcUrl = jdbcUrl;
@@ -20,27 +20,25 @@ public class BankingJDBC {
             "lei, avg_salary) VALUES ('NewBank', 200, 0, 50000000.50, '81V0FA7ASNKASD74A8D3', 80000);";
 
 
-    public static void main(String[] args) throws SQLException{
-        String jdbcUrl = "jdbc:mysql:///localhost:3306/example_jdbc_db";
+    public static void main(String[] args) throws SQLException {
+        String jdbcUrl = "jdbc:mysql://localhost:3306/example_jdbc_db";
         BankingJDBC bankingJDBC = new BankingJDBC(jdbcUrl);
         Connection dbConnection = bankingJDBC.getDbConnection();
-        //Statement statement = dbConnection.createStatement();
-        Statement statement = dbConnection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-        ResultSet resultSet = statement.executeQuery(SELECT_QUERY_1);
-        System.out.println(resultSet);
-        while(resultSet.next()){
-            System.out.println(resultSet.getObject("name"));
-        }
-
+        System.out.println("Running SELECT query on database: example_jdbc_db | table: banks");
+        executeSelectStatementQuery(dbConnection);
+        System.out.println("Updating the database: example_jdbc_db | table: banks");
+        executeUpdateStatementQuery(dbConnection);
+        System.out.println(dbConnection.getMetaData());
     }
 
+    /**
+     * In a real world use-case we would use DataSource instead of DriverManager:
+     * https://en.wikipedia.org/wiki/Datasource & https://docs.oracle.com/javase/7/docs/api/javax/sql/DataSource.html
+     */
     private Connection getDbConnection(){
         Connection conn = null;
         try {
-            //In a real world use-case we would use DataSource instead of DriverManager:
-            // https://en.wikipedia.org/wiki/Datasource & https://docs.oracle.com/javase/7/docs/api/javax/sql/DataSource.html
             conn = DriverManager.getConnection(this.jdbcUrl, this.props.getProperty("username"), this.props.getProperty("password"));
-            System.out.println(conn);
         } catch(SQLException exception){
             exception.printStackTrace();
         }
@@ -48,11 +46,35 @@ public class BankingJDBC {
     }
 
 
+    /**
+     * When performing a SELECT SQL Query we use the method (executeQuery on our statement instance - a ResultSet is returned).
+     * @param dbConnection
+     * @throws SQLException
+     */
+    private static void executeSelectStatementQuery(Connection dbConnection) throws SQLException {
+        Statement statement = dbConnection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+        ResultSet selectResultSet = statement.executeQuery(SELECT_QUERY_1);
+        while(selectResultSet.next()){
+            System.out.format("Name: %s | LEI: %s\n", selectResultSet.getString("name"), selectResultSet.getString("lei"));
+        }
+    }
+
+    /**
+     * When executing a SQL query that involves updating a table i.e. UPDATE, DELETE or INSERT - we invoke the
+     * executeUpdate() on the statement instance - the returned int shows the number of affected rows.
+     */
+    private static void executeUpdateStatementQuery(Connection connection) throws SQLException {
+        Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+        int noOfAffectedRows = statement.executeUpdate(INSERT_QUERY_1);
+        System.out.format("%d row(s) have been affected.\n", noOfAffectedRows);
+    }
+
+
     private void obtainInput(){
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter username: ");
         props.put("username", scanner.nextLine());
-        System.out.println("\nEnter password: ");
+        System.out.println("Enter password: ");
         props.put("password", scanner.nextLine());
     }
 
