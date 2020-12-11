@@ -2,6 +2,15 @@ import java.sql.*;
 import java.util.Properties;
 import java.util.Scanner;
 
+/**
+ * This java class demonstrates how to use Javas' JDBC API in order to communicate & access a database (in this case a
+ * MySQL database).
+ *
+ * Note: DriverManager & Statement classes have been used - ideally in a real-world scenario we opt to use DataSource
+ * instead of DriverManager & PreparedStatement instead of Statement.
+ *
+ * More about prepared statement: https://docs.oracle.com/javase/tutorial/jdbc/basics/prepared.html
+ */
 public class BankingJDBC {
 
     private final String jdbcUrl;
