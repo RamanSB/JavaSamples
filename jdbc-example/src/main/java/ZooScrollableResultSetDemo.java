@@ -44,7 +44,21 @@ public class ZooScrollableResultSetDemo {
             System.out.println(showAllData(rs));
 
             //We now begin illustrating how we traverse through a result set of type where scrolling is enabled.
-            //ToDo: Demonstrate how traversal of the cursor occurs.
+            boolean isDataPresent = rs.next(); //This moves the cursor FROM before the 1st row where no data exists TO the first row.
+            showDataForGivenRow(rs, isDataPresent);
+            isDataPresent = rs.last(); //moves the cursor to the last row of data - expect to see Maino (id=6)
+            showDataForGivenRow(rs, isDataPresent);
+            isDataPresent = rs.absolute(8); //There are only 6 rows of data so this will move the cursor to the 8th row - no data is present
+            showDataForGivenRow(rs, isDataPresent);
+            isDataPresent = rs.absolute(-2); //This selects the 2nd row from the bottom (id=5)
+            showDataForGivenRow(rs, isDataPresent);
+            isDataPresent = rs.relative(-2); //Cursor is on row 5 - this will move the cursor back 2 rows (relative to the current position)
+            showDataForGivenRow(rs, isDataPresent);
+            isDataPresent = rs.first(); //Moves cursor to row 1
+            showDataForGivenRow(rs, isDataPresent);
+            rs.afterLast(); //moves cursor to row afterLast (6) (no data exists) no return type on afterLast & beforeFirst because we know data is no present already.
+            isDataPresent = rs.previous();
+            showDataForGivenRow(rs, isDataPresent);
 
         }catch(SQLException exception){
             System.out.println(exception.getCause());
@@ -80,6 +94,20 @@ public class ZooScrollableResultSetDemo {
         }
         rs.beforeFirst(); //Puts the cursor before the first row - just as if we were obtaining an initial result set.
         return rowData.toString();
+    }
+
+    static void showDataForGivenRow(ResultSet rs, boolean isDataPresent) throws SQLException {
+        StringBuilder rowData = new StringBuilder();
+        if (isDataPresent) {
+            int noOfColumns = 4;
+            for (int i = 1; i <= noOfColumns; i++) {
+                rowData.append(rs.getString(i) + "|");
+            }
+            System.out.println(rowData.toString());
+        }else {
+            System.out.println("No data is present, cursor points to a row that does not exist.");
+        }
+
     }
 
 }
