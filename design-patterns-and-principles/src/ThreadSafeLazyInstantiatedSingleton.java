@@ -18,23 +18,34 @@
  */
 public class ThreadSafeLazyInstantiatedSingleton {
 
-    
-    //1 - Private Constructor
-    private ThreadSafeLazyInstantiatedSingleton(){
+    //2
+    private String id;
 
+    //1 - Private Constructor
+    private ThreadSafeLazyInstantiatedSingleton(String id){
+        this.id = id;
     }
 
     //4
     private static ThreadSafeLazyInstantiatedSingleton instance;
 
     //3
-    public static synchronized ThreadSafeLazyInstantiatedSingleton getInstance(){
+    public static synchronized ThreadSafeLazyInstantiatedSingleton getInstance(String id){
         if(instance==null){
-            instance = new ThreadSafeLazyInstantiatedSingleton();
+            instance = new ThreadSafeLazyInstantiatedSingleton(id);
         }
         return instance;
     }
 
+    public synchronized String getId(){
+        return this.id;
+    }
+
+    public static void main(String[] args){
+        //Singletons instance variables are only set once upon creation, otherwise use synchronized setters.
+        ThreadSafeLazyInstantiatedSingleton threadSafeSingleton = ThreadSafeLazyInstantiatedSingleton.getInstance("#001");
+        System.out.println(threadSafeSingleton.getId());
+    }
 
 
 }
