@@ -30,7 +30,7 @@ public class ThreadSafeLazyInstantiatedSingleton {
     private static ThreadSafeLazyInstantiatedSingleton instance;
 
     //3
-    public static synchronized ThreadSafeLazyInstantiatedSingleton getInstance(String id){
+    public static synchronized ThreadSafeLazyInstantiatedSingleton getInstance(String id){ //This runs the cost of synchronization every time the instance is required, however we only need the first call to getInstance to be synchronized, to improve this see: Double-checked locking (Singletons)
         if(instance==null){
             instance = new ThreadSafeLazyInstantiatedSingleton(id);
         }
