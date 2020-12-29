@@ -1,0 +1,49 @@
+------RUN 1------
+Executors (Thread)
+1002g 1002g 1002g 1002g
+Hay: 750 | Water: 5000 | Grass: 1000
+--------------------------------------------
+(Traditional Threads)
+1001g 1002g 5020w 5010w 751h 1003g 5030w 753h 1004g 752h 5040w 754h
+Hay: 752 | Water: 5020 | Grass: 1003
+
+-----RUN 2------
+(Executors Thread)
+1002g 1003g 1004g 1002g
+Hay: 750 | Water: 5000 | Grass: 1000
+--------------------------------------------
+(Traditional Threads)
+1001g 5010w 751h 1002g 5020w 752h 1003g 5030w 753h
+Hay: 752 | Water: 5020 | Grass: 1003
+1004g 5040w 754h
+
+------RUN 3----
+(Executors Thread)
+1004g 1004g 1004g 1004g
+Hay: 750 | Water: 5000 | Grass: 1000
+--------------------------------------------
+(Traditional Threads)
+1001g 1002g 1003g 5010w 5030w 5020w 753h 1004g 752h 751h 5040w 754h
+Hay: 750 | Water: 5030 | Grass: 1003
+
+
+-----RUN 1-----
+
+Traditional Thread
+grass: 1001, 1002, 1003, 1004
+water: 751, 753, 752, 754
+hay: 5020, 5010, 5030, 5040
+
+-----RUN 2------
+
+Traditional Thread
+grass: 1001, 1002, 1003, 1004
+water: 5010, 5020, 5030, 5040
+hay: 751, 752, 753, 754
+
+-----RUN 3------
+
+Traditional Thread
+grass: 1001, 1002, 1003, 1004
+water: 5010, 5030, 5020, 5040
+hay: 752, 752, 751, 754
