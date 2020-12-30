@@ -26,8 +26,9 @@ public class RaceConditionDemo {
         ExecutorService executorService = null;
         try{
             executorService = Executors.newFixedThreadPool(10); //Creating a Thread pool of size 10
+            ZooWorker zooWorker = new ZooWorker(zooStockNew);
             for(int i=0; i<4; i++){
-                executorService.submit(()->new ZooWorker(zooStockNew).addGrass()); //
+                executorService.submit(zooWorker::addGrass); //
             }
         }finally{
             if(executorService != null) executorService.shutdown();
