@@ -1,6 +1,7 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Abstract classes: Reader, Writer, InputStream, OutputStream
@@ -50,7 +51,101 @@ public class IODemo {
         fileReaderRel.close();
         br.close();
 
+//        //Using FileInputStream to read bytes from a file
+//        InputStream is = new BufferedInputStream(new FileInputStream(new File("IO/resources/example_text_file.txt")));
+//
+//        byte[] buffer = new byte[1024];
+//        int length;
+//        System.out.println(buffer);
+//        while((length = is.read(buffer)) > 0){
+//            System.out.println(length);
+//            System.out.println("Buffer: " + Arrays.toString(buffer));
+//        }
 
-        
+
+
+        /**
+            Illustrating how to serialize and deserialize an object using ObjectOutputStream & ObjectInputStream respectively.
+            Remember: File*Input*Stream can be used to 'read' a file, File*Output*Stream can be used to 'write' to a file.
+            By the same token Object*Output*Stream writes the JavaObject to disk (Serializing), Object*Input*Stream reads
+            the data from disk in to a Java Object (Deserialization).
+         */
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(new File("IO/resources/phone_data.txt"))); //Used to read data from file
+        List<CustomObjectPhone> phones = new ArrayList<>();
+        String textData;
+        while((textData = bufferedReader.readLine()) != null){
+            String[] phoneAttributes = textData.split(","); //Parsing data from file
+            String brand = phoneAttributes[0];
+            String model = phoneAttributes[1];
+            float height = Float.parseFloat(phoneAttributes[2]);
+            float width = Float.parseFloat(phoneAttributes[3]);
+            phones.add(new CustomObjectPhone(brand, model, height, width)); //Instantiating phone objects to add to list, these will be serialized.
+        }
+        bufferedReader.close();
+
+        for(CustomObjectPhone phone : phones){
+            System.out.println(phone); //Data from text file has been written to an in-memory object (CustomObjectPhone)
+        }
+
+        //Serializing
+        ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File("IO/resources/phones.data"))));
+        for(CustomObjectPhone phone : phones){
+            oos.writeObject(phone); //Serializing
+        }
+        oos.close();
+        phones.clear();
+
+        //Deserializing (excepting to not obtain any values for the float instance variables) as they are marked as transient
+        try(ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(new File("IO/resources/phones.data"))))){
+            Object obj;
+            while((obj = ois.readObject()) != null){
+                if(obj instanceof CustomObjectPhone){
+                    phones.add((CustomObjectPhone) obj);
+                }
+            }
+        }catch(ClassNotFoundException | EOFException ignored){
+
+        }
+        finally{
+            System.out.println(phones);
+        }
     }
+
+}
+
+class CustomObjectPhone implements Serializable { //Required in order to be serialized otherwise NotSerializableException is thrown when attempted to serialize.
+
+    private static final long serialVersionUID = 1l;
+    private String brand;
+    private String model;
+    transient float height; //These will not be stored/saved when serialized (that is what transient implies)
+    transient float width;
+
+    CustomObjectPhone(String brand, String model, float height, float width){
+        this.brand = brand;
+        this.model = model;
+        this.height = height;
+        this.width = width;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public String toString(){
+        return String.format("Phone: %s %s | Dimensions: %f x %f", getBrand(), getModel(), getWidth(), getHeight());
+    }
+
 }
