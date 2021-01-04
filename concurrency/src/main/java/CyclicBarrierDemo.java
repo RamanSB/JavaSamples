@@ -14,7 +14,7 @@ import java.util.concurrent.*;
 public class CyclicBarrierDemo {
 
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args){
         int noOfCustomers = 12;
         ExecutorService service = Executors.newFixedThreadPool(noOfCustomers); //assuming there are 24 customers attending the cinema
         CyclicBarrier c1 = new CyclicBarrier(noOfCustomers, ()->{
