@@ -15,6 +15,8 @@ import java.util.List;
  * Operates using groups of data (bytes or text): BufferedWriter, BufferedReader
  *
  */
+
+//ToDo: Create separate methods to demonstrate each individual concept.
 public class IODemo {
 
     public static void main(String[] args) throws IOException {
@@ -50,6 +52,9 @@ public class IODemo {
         }
         fileReaderRel.close();
         br.close();
+
+        //ToDo: Demonstrate how to read/write from FileInputStream/FileOutputStream using byte[]
+        //ToDo: Demonstrate how to read/write from FileReader/FileWriter using char[]
 
 //        //Using FileInputStream to read bytes from a file
 //        InputStream is = new BufferedInputStream(new FileInputStream(new File("IO/resources/example_text_file.txt")));
@@ -103,19 +108,22 @@ public class IODemo {
                     phones.add((CustomObjectPhone) obj);
                 }
             }
-        }catch(ClassNotFoundException | EOFException ignored){
-
         }
+        catch(ClassNotFoundException | EOFException ignored){ }
         finally{
             System.out.println(phones);
         }
+
+        //ToDo: Demo PrintWriter & PrintStream classes. (System.out.print == printWriter.write( w/String.valueOf method)
     }
+
+
 
 }
 
 class CustomObjectPhone implements Serializable { //Required in order to be serialized otherwise NotSerializableException is thrown when attempted to serialize.
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private String brand;
     private String model;
     transient float height; //These will not be stored/saved when serialized (that is what transient implies)
