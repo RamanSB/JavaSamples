@@ -17,19 +17,19 @@ public class CyclicBarrierDemo {
     public static void main(String[] args){
         int noOfCustomers = 12;
         ExecutorService service = Executors.newFixedThreadPool(noOfCustomers); //assuming there are 24 customers attending the cinema
-        CyclicBarrier c1 = new CyclicBarrier(noOfCustomers, ()->{
+        CyclicBarrier c1 = new CyclicBarrier(noOfCustomers, ()->{ //When c1.await() is invoked noOfCustomers time the runnable will be invoked - which begins the movie.
             System.out.println("All customers are parked and ready to watch the movie");
             CinemaManager.playMovie();
         });
-        CyclicBarrier c2 = new CyclicBarrier(noOfCustomers, ()->{
+        CyclicBarrier c2 = new CyclicBarrier(noOfCustomers, ()->{//When c2.await() is invoked noOfCustomers time the runnable will be invoked - which ends the movie.
             CinemaManager.endMovie();
             System.out.println("Movie has ended - Please exit the cinema car park.");
 
         });
         try {
             for (int i = 0; i < noOfCustomers; i++) {
-                final DriveInCinemaCustomer customer = new DriveInCinemaCustomer(i);
-                service.submit(() -> performTask(c1, c2, customer));
+                final DriveInCinemaCustomer customer = new DriveInCinemaCustomer(i); //For each iteration of the while-loop we create a DriveInCinemaCustomer object and assign an id.
+                service.submit(() -> performTask(c1, c2, customer)); //We then submit #noOfCustomers (12) tasks to be executed by (12) #noOfCustomer threads.
             }
         }finally {
             if (service != null) { //Defensive (meaning even though service is never null, I still check for this condition)
@@ -41,9 +41,9 @@ public class CyclicBarrierDemo {
     public static void performTask(CyclicBarrier c1, CyclicBarrier c2, DriveInCinemaCustomer customer){
         try {
             customer.enterCinema();
-            c1.await();
-            c2.await();
-            customer.leaveCinema();
+            c1.await(); //We will not proceed to beginning the movie until all customers have entered the cinema.
+            c2.await(); //We will not proceed to end the movie until all customers have acknowledged the movie has started.
+            customer.leaveCinema(); //Once the movie has ended, all customers may leave the drive in cinema.
         }catch(BrokenBarrierException | InterruptedException ex){
             ex.printStackTrace();
         }
