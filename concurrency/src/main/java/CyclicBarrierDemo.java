@@ -14,24 +14,34 @@ import java.util.concurrent.*;
 public class CyclicBarrierDemo {
 
 
-    public static void main(String[] args){
-        int noOfCustomers = 4;
+    public static void main(String[] args) throws InterruptedException {
+        int noOfCustomers = 12;
         ExecutorService service = Executors.newFixedThreadPool(noOfCustomers); //assuming there are 24 customers attending the cinema
-        CyclicBarrier c1 = new CyclicBarrier(noOfCustomers, ()->System.out.println("All customers are parked and ready to watch the movie"));
-        CyclicBarrier c2 = new CyclicBarrier(noOfCustomers, ()->System.out.println("Movie has ended - Please exit the cinema car park."));
-        for(int i=0; i<noOfCustomers; i++){
-            final DriveInCinemaCustomer customer = new DriveInCinemaCustomer(i);
-            service.submit(()-> performTask(c1, c2, customer));
-        }
+        CyclicBarrier c1 = new CyclicBarrier(noOfCustomers, ()->{
+            System.out.println("All customers are parked and ready to watch the movie");
+            CinemaManager.playMovie();
+        });
+        CyclicBarrier c2 = new CyclicBarrier(noOfCustomers, ()->{
+            CinemaManager.endMovie();
+            System.out.println("Movie has ended - Please exit the cinema car park.");
 
+        });
+        try {
+            for (int i = 0; i < noOfCustomers; i++) {
+                final DriveInCinemaCustomer customer = new DriveInCinemaCustomer(i);
+                service.submit(() -> performTask(c1, c2, customer));
+            }
+        }finally {
+            if (service != null) { //Defensive (meaning even though service is never null, I still check for this condition)
+                service.shutdown();
+            }
+        }
     }
 
     public static void performTask(CyclicBarrier c1, CyclicBarrier c2, DriveInCinemaCustomer customer){
         try {
             customer.enterCinema();
             c1.await();
-            CinemaManager.playMovie();
-            CinemaManager.endMovie();
             c2.await();
             customer.leaveCinema();
         }catch(BrokenBarrierException | InterruptedException ex){
