@@ -17,6 +17,7 @@ import java.util.List;
  */
 
 //ToDo: Create separate methods to demonstrate each individual concept.
+//ToDo: What is Filter(Input/Output)Stream purpose.
 public class IODemo {
 
     public static void main(String[] args) throws IOException {
@@ -56,17 +57,15 @@ public class IODemo {
         //ToDo: Demonstrate how to read/write from FileInputStream/FileOutputStream using byte[]
         //ToDo: Demonstrate how to read/write from FileReader/FileWriter using char[]
 
-//        //Using FileInputStream to read bytes from a file
-//        InputStream is = new BufferedInputStream(new FileInputStream(new File("IO/resources/example_text_file.txt")));
-//
-//        byte[] buffer = new byte[1024];
-//        int length;
-//        System.out.println(buffer);
-//        while((length = is.read(buffer)) > 0){
-//            System.out.println(length);
-//            System.out.println("Buffer: " + Arrays.toString(buffer));
-//        }
+        byte[] byteArrayToWrite = {12,127, 0, 24, 83, 24, 82, 29, 83, 12,15,127,15,125,93,1,92,1,0,5,31,51}; //random-bytes
+        FileOutputStream fos = new FileOutputStream(new File("IO/resources/byte-array-write.txt"));
+        fos.write(byteArrayToWrite);
+        fos.close();
 
+        char[] charArrayToWrite = {'u','s','i','n','g',' ','c','h','a','r','a','r','r','a','y'};
+        FileWriter fileWriter = new FileWriter(new File("IO/resources/char-array-write.txt"));
+        fileWriter.write(charArrayToWrite);
+        fileWriter.close();
 
 
         /**
