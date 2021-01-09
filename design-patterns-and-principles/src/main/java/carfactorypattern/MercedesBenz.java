@@ -1,4 +1,5 @@
-public class MercedesBenz extends Car{
+package carfactorypattern;
+public class MercedesBenz extends Car {
 
     @Override
     public String getBrand() {

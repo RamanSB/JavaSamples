@@ -1,3 +1,4 @@
+-pattern;
 /**
  * This class is the Factory class that is capable of creating an Aerial Vehicle (object which implements AirTransport).
  *

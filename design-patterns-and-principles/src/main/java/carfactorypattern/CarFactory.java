@@ -1,3 +1,4 @@
+package carfactorypattern;
 public class CarFactory {
 
     static Car getCar(String carType, String model, boolean is4x4){
