@@ -27,6 +27,12 @@ import java.util.stream.Stream;
  * 2) Accumulator operation op, must be associative: (a op b) op c = a op (b op c) & stateless
  * 3) Combiner operator must also be associative and stateless.
  *
+ * ::Rules::
+ * The identity value must be an identity for the accumulator function. This means that for all u,
+ * accumulator(identity, u) is equal to u.
+ *
+ * combiner.apply(u, accumulator.apply(identity, t)) == accumulator.apply(u, t)
+ * ::End Rules
  *  Parallel Stream operation
  *
  *  Note:
@@ -79,6 +85,16 @@ public class StreamReductionDemo {
         }
         int byteSumCheck = Arrays.stream(byteArrayBoxed).mapToInt(x->x).sum();
         System.out.println(byteSumCheck == byteSum);
+
+        /*
+            We will now show that the above (3-arg) reduction method follows rules outlined in the Java documentation:
+            1) for all elements in the stream u, combiner.apply(identity, u) is equal to u.
+            2)
+            3) The combiner operator must also be associative and stateless and compatible with the identity,
+               such that for all of u and t combiner.apply(u, accumulator.apply(identity, t)) is equal to accumulator.apply(u,t) .
+        */
+        System.out.println(combiner.apply(0, 100) == 100); //1
+        System.out.println(combiner.apply(10, accumulator.apply(0, "L")) == accumulator.apply(10, "L")); //3
     }
 
 }
