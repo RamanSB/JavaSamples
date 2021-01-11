@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Abstract classes: Reader, Writer, InputStream, OutputStream
- * Low-Level Stream IO Classes: FileInputStream (reads file as Bytes), FileOutputStream (writes to file in bytes), FileReader (read file data as characters), FileWriter (writes to files with chars)
+ * Low-Level Stream IO Classes: (All classes beginning with File) FileInputStream (reads file as Bytes), FileOutputStream (writes to file in bytes), FileReader (read file data as characters), FileWriter (writes to files with chars)
  * High-Level Stream IO Classes: BufferedWriter, BufferedReader, ObjectInputStream (Deserialize a Java Object or primitive from an existing InputStream), ObjectOutputStream (Serializes a java object or data type) - InputStreamReader, OutputStreamWriter
  *
  * PrintStream (Writes formatted representation of Java object to a **Binary** stream
@@ -20,8 +20,8 @@ import java.util.List;
 //ToDo: What is Filter(Input/Output)Stream purpose.
 public class IODemo {
 
-    public static void main(String[] args) throws IOException {
 
+    public static void readingFromAFile() throws IOException{
         //Reading a file using absolute path or relative path
         FileReader fileReaderAbs = new FileReader("/Users/ramandeepbedi/Documents/Java/OCP8/IO/resources/example_text_file.txt"); //Absolute path
         FileReader fileReaderRel = new FileReader("IO/resources/example_text_file.txt"); //Relative path
@@ -32,12 +32,15 @@ public class IODemo {
         }
         fileReaderAbs.close(); //Closing fileReader resource to prevent resource leak
 
+    }
 
+    public static void aFewBufferedReaderMethods() throws IOException{
         //Demonstrating how to use a BufferedReader
+        FileReader fileReaderRel = new FileReader("IO/resources/example_text_file.txt"); //Relative path
         BufferedReader br = new BufferedReader(fileReaderRel); //BufferedReader - reads char data as outlined above but from an existing reader (in this case FileReader)
         long result = br.skip(3); //Moves the marker/cursor to the 4th char (skips 3 chars: 'a','n',' ')
         System.out.println("\nNumber of characters skipped: " + result);
-        data = br.read();
+        int data = br.read();
         while(data != -1){
             if(result==10){
                 System.out.println("\nMarking the BufferedReader stream after reading 'e' in example");
@@ -54,9 +57,9 @@ public class IODemo {
         fileReaderRel.close();
         br.close();
 
-        //ToDo: Demonstrate how to read/write from FileInputStream/FileOutputStream using byte[]
-        //ToDo: Demonstrate how to read/write from FileReader/FileWriter using char[]
+    }
 
+    public static void writeToFileViaByteAndCharArray() throws IOException{
         byte[] byteArrayToWrite = {12,127, 0, 24, 83, 24, 82, 29, 83, 12,15,127,15,125,93,1,92,1,0,5,31,51}; //random-bytes
         FileOutputStream fos = new FileOutputStream(new File("IO/resources/byte-array-write.txt"));
         fos.write(byteArrayToWrite);
@@ -67,13 +70,15 @@ public class IODemo {
         fileWriter.write(charArrayToWrite);
         fileWriter.close();
 
+    }
 
-        /**
-            Illustrating how to serialize and deserialize an object using ObjectOutputStream & ObjectInputStream respectively.
-            Remember: File*Input*Stream can be used to 'read' a file, File*Output*Stream can be used to 'write' to a file.
-            By the same token Object*Output*Stream writes the JavaObject to disk (Serializing), Object*Input*Stream reads
-            the data from disk in to a Java Object (Deserialization).
-         */
+    /**
+     Illustrating how to serialize and deserialize an object using ObjectOutputStream & ObjectInputStream respectively.
+     Remember: File*Input*Stream can be used to 'read' a file, File*Output*Stream can be used to 'write' to a file.
+     By the same token Object*Output*Stream writes the JavaObject to disk (Serializing), Object*Input*Stream reads
+     the data from disk in to a Java Object (Deserialization).
+     */
+    public static void demoSerialization() throws IOException{
         BufferedReader bufferedReader = new BufferedReader(new FileReader(new File("IO/resources/phone_data.txt"))); //Used to read data from file
         List<CustomObjectPhone> phones = new ArrayList<>();
         String textData;
@@ -115,9 +120,16 @@ public class IODemo {
 
         //ToDo: Demo PrintWriter & PrintStream classes. (System.out.print == printWriter.write( w/String.valueOf method)
     }
-
-
-
+    public static void main(String[] args){
+        try {
+            readingFromAFile();
+            aFewBufferedReaderMethods();
+            writeToFileViaByteAndCharArray();
+            demoSerialization();
+        } catch(IOException ex){
+            ex.printStackTrace();
+        }
+    }
 }
 
 class CustomObjectPhone implements Serializable { //Required in order to be serialized otherwise NotSerializableException is thrown when attempted to serialize.
