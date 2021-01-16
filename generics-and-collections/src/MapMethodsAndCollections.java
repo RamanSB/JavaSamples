@@ -13,6 +13,7 @@ public class MapMethodsAndCollections {
 
     public static void main(String[] args){
         demoReplaceAll();
+        demoRemoveIf();
         demoMerge();
         demoMergeWhenValueIsNull();
         demoMergeWhenMapperReturnsNull();
@@ -32,6 +33,22 @@ public class MapMethodsAndCollections {
             return s;
         });
         System.out.println(names);
+    }
+
+    /**
+     * This method exists on all Collections that implement the Collection interface (Not Map)
+     */
+    static void demoRemoveIf(){
+        Queue<Integer> queue = new LinkedList<>();
+        queue.offer(2);
+        queue.offer(442);
+        queue.offer(50);
+        queue.offer(42);
+        queue.offer(10);
+        queue.offer(40);
+        boolean result = queue.removeIf(x -> x%10 != 0);
+        System.out.println(result);
+        System.out.println(queue);
     }
 
     /**
