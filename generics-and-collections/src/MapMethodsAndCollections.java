@@ -6,12 +6,16 @@ import java.util.function.BiFunction;
  * List (replaceAll)
  * Collections (removeIf)
  * Map (merge)
+ *
+ * ToDo: These should all be moved in to a unit test .java file with assertions
  */
 public class MapMethodsAndCollections {
 
     public static void main(String[] args){
         demoReplaceAll();
         demoMerge();
+        demoMergeWhenValueIsNull();
+        demoMergeWhenMapperReturnsNull();
     }
 
     /**
@@ -65,6 +69,34 @@ public class MapMethodsAndCollections {
             }
         }
         System.out.println(testScoreMap);
+    }
+
+    static Map<Integer, String> idNameMap = new TreeMap<>();
+    /**
+     * Mapping function doesn't run, the value provided is assigned when value is null for a given key.
+     */
+    static void demoMergeWhenValueIsNull(){
+        //idNameMap.put(null, "Unknown"); //will throw exception, TreeMap CANNOT HAVE a NULL KEY
+        idNameMap.put(1, "First employee");
+        idNameMap.put(2, "James");
+        idNameMap.put(1921, "Early Slave");
+        idNameMap.put(39198, "Decent Slave");
+        idNameMap.put(424, null);
+        idNameMap.put(892824, "Warehouse slave");
+        BiFunction<String, String, String> mergeMapper = (v1, v2) -> (v1.substring(0, v1.length()/2)).concat(v2.substring(v2.length()/2));
+        String newName = idNameMap.merge(424, "A name has been assigned to you", mergeMapper);
+        System.out.println(newName);
+    }
+
+    /**
+     * If the mapper is invoked and returns null, then the key associated with the merge is removed.
+     */
+    static void demoMergeWhenMapperReturnsNull(){
+        BiFunction<String, String, String> nullMapper = (v1, v2) -> null;
+        String result = idNameMap.merge(39198, "Lol", nullMapper);
+        //Notice id 39198 has been removed from the map
+        System.out.println(idNameMap);
+        System.out.println(result);
     }
 
 
